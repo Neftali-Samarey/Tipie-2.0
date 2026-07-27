@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var splitViewEnabled: Bool = false
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -23,19 +26,29 @@ struct ContentView: View {
                 )
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                /*ToolbarItem(placement: .topBarLeading) {
                     Button {
                     } label: {
-                        Image(systemName: "line.3.horizontal")
+                        if let settingsIcon = UIImage(named: "slider") {
+                            Image(uiImage: settingsIcon)
+                        }
                     }
-                }
+                }*/
 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        splitViewEnabled = true
                     } label: {
-                        Image(systemName: "plus")
+                        if let splitIcon = UIImage(named: "SplitIcon") {
+                            Image(uiImage: splitIcon)
+                        }
                     }
                 }
+            }
+            .sheet(isPresented: $splitViewEnabled) {
+                // TODO: - replace this with the UI for splitting the bill
+                Text("Sheet Content")
+                    .presentationDetents([.medium])
             }
         }
     }
