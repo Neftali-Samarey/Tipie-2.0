@@ -18,7 +18,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        // Add leading button action here.
+                        // Add leading button action here. 
                     } label: {
                         Image(systemName: "line.3.horizontal")
                     }
@@ -40,10 +40,12 @@ struct ContentView: View {
 
 fileprivate extension ContentView {
     var displayView: some View {
-        VStack(alignment: .leading, spacing: .zero) {
-            //
+        VStack(spacing: .zero) {
+            DisplayView(type: .due)
+            DisplayView(type: .tip)
+            DisplayView(type: .total)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .border(Color.blue)
     }
 }
