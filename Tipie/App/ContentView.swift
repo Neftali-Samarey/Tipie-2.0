@@ -10,15 +10,21 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         NavigationStack {
-            VStack(spacing: .zero) {
-                displayView
-                keyboardView
+            GeometryReader { geometry in
+                VStack(spacing: .zero) {
+                    displaySegmentView
+                        .frame(height: geometry.size.height * 0.4)
+                    keyboardView
+                        .frame(height: geometry.size.height * 0.6)
+                }
+                .frame(
+                    width: geometry.size.width,
+                    height: geometry.size.height
+                )
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        // Add leading button action here. 
                     } label: {
                         Image(systemName: "line.3.horizontal")
                     }
@@ -26,7 +32,6 @@ struct ContentView: View {
 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        // Add trailing button action here.
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -39,14 +44,45 @@ struct ContentView: View {
 // MARK: Display
 
 fileprivate extension ContentView {
-    var displayView: some View {
+    var displaySegmentView: some View {
         VStack(spacing: .zero) {
-            DisplayView(type: .due)
-            DisplayView(type: .tip)
-            DisplayView(type: .total)
+            VStack(spacing: .zero) {
+                DisplayView(type: .due)
+                DisplayView(type: .tip)
+                DisplayView(type: .total)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .layoutPriority(1)
+            .border(Color.blue)
+
+            tipPresetsView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .border(Color.blue)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// MARK: Tip Presets
+
+fileprivate extension ContentView {
+    var tipPresetsView: some View {
+        HStack(spacing: .zero) {
+            tipPreset("15%")
+            tipPreset("18%")
+            tipPreset("20%")
+            tipPreset("Custom")
+        }
+    }
+
+    @ViewBuilder
+    private func tipPreset(_ title: String) -> some View {
+        Text(title)
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .padding(.vertical, 12)
+            .overlay(
+                RoundedRectangle(cornerRadius: .zero)
+                    .stroke(.red)
+            )
     }
 }
 
