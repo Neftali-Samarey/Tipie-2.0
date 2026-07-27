@@ -38,7 +38,7 @@ fileprivate extension DisplayView {
         }
         .font(.system(.title2, design: .rounded))
         .padding(.horizontal, 15)
-        .padding(.vertical, 15)
+        .padding(.vertical, 20)
     }
 }
 

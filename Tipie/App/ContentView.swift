@@ -13,9 +13,9 @@ struct ContentView: View {
             GeometryReader { geometry in
                 VStack(spacing: .zero) {
                     displaySegmentView
-                        .frame(height: geometry.size.height * 0.4)
+                        .frame(height: geometry.size.height * 0.45)
                     keyboardView
-                        .frame(height: geometry.size.height * 0.6)
+                        .frame(height: geometry.size.height * 0.55)
                 }
                 .frame(
                     width: geometry.size.width,
@@ -67,22 +67,38 @@ fileprivate extension ContentView {
 fileprivate extension ContentView {
     var tipPresetsView: some View {
         HStack(spacing: .zero) {
-            tipPreset("15%")
-            tipPreset("18%")
-            tipPreset("20%")
-            tipPreset("Custom")
+            tipPreset("15%") {
+                // action
+            }
+
+            tipPreset("18%") {
+                // action
+            }
+
+            tipPreset("20%") {
+                // action
+            }
+
+            tipPreset("Custom") {
+                // action
+            }
         }
     }
 
     @ViewBuilder
-    private func tipPreset(_ title: String) -> some View {
-        Text(title)
-            .frame(maxWidth: .infinity, minHeight: 56)
-            .padding(.vertical, 12)
-            .overlay(
-                RoundedRectangle(cornerRadius: .zero)
-                    .stroke(.red)
-            )
+    private func tipPreset(_ title: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            Text(title)
+                .frame(maxWidth: .infinity, minHeight: 56)
+                .padding(.vertical, 12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: .zero)
+                        .stroke(.red)
+                )
+        }
+        .buttonStyle(.plain)
     }
 }
 
