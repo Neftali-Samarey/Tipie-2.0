@@ -7,9 +7,18 @@
 
 import SwiftUI
 
+enum ActiveTipElement {
+    case fifteen
+    case eighteen
+    case twenty
+    case custom
+}
+
 struct ContentView: View {
     
+    @State private var viewModel = CalculationViewModel()
     @State private var splitViewEnabled: Bool = false
+    @State private var activeTipElement: ActiveTipElement = .fifteen
     
     var body: some View {
         NavigationStack {
@@ -66,7 +75,6 @@ fileprivate extension ContentView {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .layoutPriority(1)
-            .border(Color.blue)
 
             tipPresetsView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -80,35 +88,41 @@ fileprivate extension ContentView {
 fileprivate extension ContentView {
     var tipPresetsView: some View {
         HStack(spacing: .zero) {
-            tipPreset("15%") {
-                // action
+            tipPreset("15%", isSelected: activeTipElement == .fifteen) {
+                activeTipElement = .fifteen
             }
 
-            tipPreset("18%") {
-                // action
+            tipPreset("18%", isSelected: activeTipElement == .eighteen) {
+                activeTipElement = .eighteen
             }
 
-            tipPreset("20%") {
-                // action
+            tipPreset("20%", isSelected: activeTipElement == .twenty) {
+                activeTipElement = .twenty
             }
 
-            tipPreset("Custom") {
-                // action
+            tipPreset("Custom", isSelected: activeTipElement == .custom) {
+                activeTipElement = .custom
             }
         }
     }
 
     @ViewBuilder
-    private func tipPreset(_ title: String, action: @escaping () -> Void) -> some View {
+    private func tipPreset(
+        _ title: String,
+        isSelected: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
         Button {
             action()
         } label: {
             Text(title)
                 .frame(maxWidth: .infinity, minHeight: 56)
+                .font(.system(.body, design: .rounded))
                 .padding(.vertical, 12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: .zero)
-                        .stroke(.red)
+                .foregroundStyle(.white)
+                .background(
+                    RoundedRectangle(cornerRadius: 0)
+                        .fill(isSelected ? Color.red.opacity(0.8) : Color.red)
                 )
         }
         .buttonStyle(.plain)
@@ -120,10 +134,11 @@ fileprivate extension ContentView {
 fileprivate extension ContentView {
     var keyboardView: some View {
         VStack(spacing: .zero) {
-            Text("Keyboard")
+            KeyboardView { action in
+                viewModel.handleKeyboard(action)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .border(Color.red)
     }
 }
 
