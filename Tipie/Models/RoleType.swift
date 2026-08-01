@@ -16,7 +16,7 @@ enum RoleType {
     
     var title: String {
         switch self {
-        case .due: return "Due"
+        case .due: return "Amount Due"
         case .tip: return "Tip"
         case .total: return "Total"
         }

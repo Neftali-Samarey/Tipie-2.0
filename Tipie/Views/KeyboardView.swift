@@ -47,14 +47,11 @@ struct KeyboardView: View {
                         } else {
                             action(.keyPressed(item))
                         }
+                        HapticFeedbackService.vibrate(.selection)
                     } label: {
                         keyLabel(item)
                             .frame(maxWidth: .infinity)
                             .frame(height: keyHeight)
-                            .background {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.gray.opacity(0.15))
-                            }
                     }
                     .frame(height: keyHeight)
                     .buttonStyle(.plain)
@@ -71,7 +68,7 @@ struct KeyboardView: View {
                 Text(item)
             }
         }
-        .font(.system(size: 35, weight: .thin, design: .rounded))
+        .font(.system(size: 30, weight: .light, design: .rounded))
     }
 }
 

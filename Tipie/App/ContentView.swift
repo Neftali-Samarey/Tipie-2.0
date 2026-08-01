@@ -12,40 +12,63 @@ enum ActiveTipElement {
     case eighteen
     case twenty
     case custom
+
+    /// Tip percentage associated with the preset. `custom` has no fixed value
+    /// and keeps whatever percentage is currently set.
+    var percentage: Double? {
+        switch self {
+        case .fifteen: return 15
+        case .eighteen: return 18
+        case .twenty: return 20
+        case .custom: return nil
+        }
+    }
 }
 
 struct ContentView: View {
     
     @State private var viewModel = CalculationViewModel()
     @State private var splitViewEnabled: Bool = false
-    @State private var activeTipElement: ActiveTipElement = .fifteen
     
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
-                VStack(spacing: .zero) {
-                    displaySegmentView
-                        .frame(height: geometry.size.height * 0.45)
-                    keyboardView
-                        .frame(height: geometry.size.height * 0.55)
+                ZStack {
+                    LinearGradient(
+                        colors: [
+                            .tipiePurple,
+                            .tipieDisplayBlue
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .topTrailing
+                    )
+                    .ignoresSafeArea()
+
+                    VStack {
+                        Spacer()
+
+                        Color.white
+                            .frame(height: geometry.safeAreaInsets.bottom)
+                            .ignoresSafeArea(edges: .bottom)
+                    }
+
+                    VStack(spacing: .zero) {
+                        displaySegmentView
+                            .frame(height: geometry.size.height * 0.45)
+
+                        keyboardBottomView
+                            .frame(height: geometry.size.height * 0.55)
+                    }
+                    .frame(
+                        width: geometry.size.width,
+                        height: geometry.size.height
+                    )
                 }
-                .frame(
-                    width: geometry.size.width,
-                    height: geometry.size.height
-                )
             }
             .toolbar {
-                /*ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                    } label: {
-                        if let settingsIcon = UIImage(named: "slider") {
-                            Image(uiImage: settingsIcon)
-                        }
-                    }
-                }*/
-
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        HapticFeedbackService.vibrate(.selection)
                         splitViewEnabled = true
                     } label: {
                         if let splitIcon = UIImage(named: "SplitIcon") {
@@ -55,7 +78,6 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $splitViewEnabled) {
-                // TODO: - replace this with the UI for splitting the bill
                 Text("Sheet Content")
                     .presentationDetents([.medium])
             }
@@ -69,15 +91,15 @@ fileprivate extension ContentView {
     var displaySegmentView: some View {
         VStack(spacing: .zero) {
             VStack(spacing: .zero) {
-                DisplayView(type: .due)
-                DisplayView(type: .tip)
-                DisplayView(type: .total)
+                DisplayView(type: .due, separatorVisible: true, value: viewModel.dueDisplay)
+                DisplayView(type: .tip, separatorVisible: true, value: viewModel.tipDisplay)
+                DisplayView(type: .total, separatorVisible: false, value: viewModel.totalDisplay)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .layoutPriority(1)
 
-            tipPresetsView
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            /*tipPresetsView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)*/
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -88,20 +110,20 @@ fileprivate extension ContentView {
 fileprivate extension ContentView {
     var tipPresetsView: some View {
         HStack(spacing: .zero) {
-            tipPreset("15%", isSelected: activeTipElement == .fifteen) {
-                activeTipElement = .fifteen
+            tipPreset("15%", isSelected: viewModel.activeTipElement == .fifteen) {
+                viewModel.activeTipElement = .fifteen
             }
 
-            tipPreset("18%", isSelected: activeTipElement == .eighteen) {
-                activeTipElement = .eighteen
+            tipPreset("18%", isSelected: viewModel.activeTipElement == .eighteen) {
+                viewModel.activeTipElement = .eighteen
             }
 
-            tipPreset("20%", isSelected: activeTipElement == .twenty) {
-                activeTipElement = .twenty
+            tipPreset("20%", isSelected: viewModel.activeTipElement == .twenty) {
+                viewModel.activeTipElement = .twenty
             }
 
-            tipPreset("Custom", isSelected: activeTipElement == .custom) {
-                activeTipElement = .custom
+            tipPreset("Custom", isSelected: viewModel.activeTipElement == .custom) {
+                viewModel.activeTipElement = .custom
             }
         }
     }
@@ -113,6 +135,7 @@ fileprivate extension ContentView {
         action: @escaping () -> Void
     ) -> some View {
         Button {
+            HapticFeedbackService.vibrate(.selection)
             action()
         } label: {
             Text(title)
@@ -124,6 +147,14 @@ fileprivate extension ContentView {
                     RoundedRectangle(cornerRadius: 0)
                         .fill(isSelected ? Color.red.opacity(0.8) : Color.red)
                 )
+                /*.background(
+                    RoundedRectangle(cornerRadius: 0)
+                        .fill(
+                            isSelected
+                                ? AnyShapeStyle(Color.red.opacity(0.8))
+                                : AnyShapeStyle(LinearGradient.tipiePrimary)
+                        )
+                )*/
         }
         .buttonStyle(.plain)
     }
@@ -132,13 +163,23 @@ fileprivate extension ContentView {
 // MARK: Keyboard
 
 fileprivate extension ContentView {
-    var keyboardView: some View {
+    var keyboardBottomView: some View {
         VStack(spacing: .zero) {
             KeyboardView { action in
                 viewModel.handleKeyboard(action)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.white)
+        .clipShape(
+            UnevenRoundedRectangle(
+                topLeadingRadius: 24,
+                bottomLeadingRadius: 0,
+                bottomTrailingRadius: 0,
+                topTrailingRadius: 24
+            )
+        )
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 }
 
