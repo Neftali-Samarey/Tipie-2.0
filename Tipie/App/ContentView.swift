@@ -89,19 +89,23 @@ struct ContentView: View {
 
 fileprivate extension ContentView {
     var displaySegmentView: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 15) {
             VStack(spacing: .zero) {
                 DisplayView(type: .due, separatorVisible: true, value: viewModel.dueDisplay)
                 DisplayView(type: .tip, separatorVisible: true, value: viewModel.tipDisplay)
                 DisplayView(type: .total, separatorVisible: false, value: viewModel.totalDisplay)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .frame(maxWidth: .infinity, alignment: .top)
             .layoutPriority(1)
 
-            /*tipPresetsView
-                .frame(maxWidth: .infinity, maxHeight: .infinity)*/
+            tipPresetsView
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .top
+        )
+       // .border(Color.red)
     }
 }
 
@@ -126,6 +130,12 @@ fileprivate extension ContentView {
                 viewModel.activeTipElement = .custom
             }
         }
+        .padding(4)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.white.opacity(0.2))
+        )
+        .padding(.horizontal, 15)
     }
 
     @ViewBuilder
@@ -139,22 +149,19 @@ fileprivate extension ContentView {
             action()
         } label: {
             Text(title)
-                .frame(maxWidth: .infinity, minHeight: 56)
+                .frame(maxWidth: .infinity, minHeight: 35)
                 .font(.system(.body, design: .rounded))
-                .padding(.vertical, 12)
+                .bold()
+                .padding(.vertical, 8)
                 .foregroundStyle(.white)
                 .background(
-                    RoundedRectangle(cornerRadius: 0)
-                        .fill(isSelected ? Color.red.opacity(0.8) : Color.red)
-                )
-                /*.background(
-                    RoundedRectangle(cornerRadius: 0)
+                    RoundedRectangle(cornerRadius: 10)
                         .fill(
                             isSelected
-                                ? AnyShapeStyle(Color.red.opacity(0.8))
-                                : AnyShapeStyle(LinearGradient.tipiePrimary)
+                            ? Color.white.opacity(0.25)
+                            : Color.clear
                         )
-                )*/
+                )
         }
         .buttonStyle(.plain)
     }
