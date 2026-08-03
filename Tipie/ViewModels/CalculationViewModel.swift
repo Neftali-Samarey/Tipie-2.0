@@ -16,16 +16,12 @@ final class CalculationViewModel {
     var amount: String = ""
 
     /// Currently selected tip preset. Updating this keeps `tipPercentage` in sync.
-    var activeTipElement: ActiveTipElement = .fifteen {
-        didSet {
-            if let percentage = activeTipElement.percentage {
-                tipPercentage = percentage
-            }
-        }
-    }
+    var activeTipElement: ActiveTipElement = .fifteen
 
     /// Tip percentage applied to the amount due. Defaults to the `.fifteen` preset.
-    var tipPercentage: Double = 15
+    var tipPercentage: Double {
+        activeTipElement.percentage
+    }
 
     // MARK: Calculated values
 
@@ -88,5 +84,11 @@ final class CalculationViewModel {
         value.formatted(
             .currency(code: Locale.current.currency?.identifier ?? "USD")
         )
+    }
+    
+    // rset the cumulator
+    func reset() {
+        amount = ""
+        activeTipElement = .fifteen
     }
 }
