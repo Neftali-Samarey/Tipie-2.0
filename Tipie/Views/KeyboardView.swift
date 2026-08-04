@@ -52,6 +52,7 @@ struct KeyboardView: View {
                         keyLabel(item)
                             .frame(maxWidth: .infinity)
                             .frame(height: keyHeight)
+                            .foregroundStyle(Color.black)
                     }
                     .frame(height: keyHeight)
                     .buttonStyle(.plain)
