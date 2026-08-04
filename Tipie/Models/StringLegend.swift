@@ -8,11 +8,13 @@
 public enum StringLegend {
     case minus
     case plus
+    case splitBill
     
     var value: String {
         switch self {
         case .minus: "-"
         case .plus: "+"
+        case .splitBill: "Split Bill"
         }
     }
 }
