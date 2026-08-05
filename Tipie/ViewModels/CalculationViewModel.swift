@@ -18,6 +18,9 @@ final class CalculationViewModel {
     /// Currently selected tip preset. Updating this keeps `tipPercentage` in sync.
     var activeTipElement: ActiveTipElement = .fifteen
 
+    /// Number of people the bill is split across. Never drops below 1.
+    var numberOfSplit: Int = 1
+
     /// Tip percentage applied to the amount due. Defaults to the `.fifteen` preset.
     var tipPercentage: Double {
         activeTipElement.percentage
@@ -45,6 +48,12 @@ final class CalculationViewModel {
     var dueDisplay: String { format(dueValue) }
     var tipDisplay: String { format(tipValue) }
     var totalDisplay: String { format(totalValue) }
+
+    /// The total bill split evenly across `numberOfSplit` people, formatted as
+    /// currency. The divisor is floored at 1 to avoid dividing by zero.
+    var perPersonDisplay: String {
+        format(totalValue / Double(max(numberOfSplit, 1)))
+    }
 
     /// Formatted currency string for a given display role.
     func display(for role: RoleType) -> String {
@@ -90,5 +99,6 @@ final class CalculationViewModel {
     func reset() {
         amount = ""
         activeTipElement = .fifteen
+        numberOfSplit = 1
     }
 }

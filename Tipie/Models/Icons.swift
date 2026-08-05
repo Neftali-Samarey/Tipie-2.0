@@ -14,7 +14,7 @@ enum Icons {
     
     var value: String {
         switch self {
-        case .info: "info"
+        case .info: "info.circle"
         case .trash: "trash"
         case .split: "SplitIcon"
         }

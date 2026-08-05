@@ -63,4 +63,10 @@ public extension LinearGradient {
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
+    
+    static let buttonGradient = LinearGradient(
+        colors: [.tipiePurple, .tipieDisplayBlue],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
 }

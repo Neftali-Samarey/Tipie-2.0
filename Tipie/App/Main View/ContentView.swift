@@ -53,7 +53,6 @@ struct ContentView: View {
     
     @State private var viewModel = CalculationViewModel()
     @State private var modalRoute: ModalRoute?
-    @State private var numberofSplit: Int = 1
     
     var body: some View {
         NavigationStack {
@@ -106,15 +105,6 @@ struct ContentView: View {
 
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: Constants.iconSpacing) {
-                        // trash
-                        Button {
-                            HapticFeedbackService.vibrate(.selection)
-                            viewModel.reset()
-                        } label: {
-                            Image(systemName: Icons.trash.value)
-                                .foregroundStyle(.white)
-                        }
-                        
                         // split
                         Button {
                             HapticFeedbackService.vibrate(.selection)
@@ -126,6 +116,15 @@ struct ContentView: View {
                                     .foregroundStyle(.white)
                             }
                         }
+                        
+                        // trash
+                        Button {
+                            HapticFeedbackService.vibrate(.selection)
+                            viewModel.reset()
+                        } label: {
+                            Image(systemName: Icons.trash.value)
+                                .foregroundStyle(.white)
+                        }
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)
@@ -134,12 +133,14 @@ struct ContentView: View {
                 Group {
                     switch route {
                     case .custom:
-                        Text("Custom Input")
+                        customControlView
                     case .split:
                         splitContentView
                     }
                 }
                 .presentationDetents([.medium])
+                .interactiveDismissDisabled()
+                .preferredColorScheme(.light)
             }
         }
     }
@@ -231,54 +232,65 @@ fileprivate extension ContentView {
 
 fileprivate extension ContentView {
     var customControlView: some View {
-        VStack(spacing: .zero) {
-            Text("Custom Value Set")
+        VStack(spacing: 24) {
+            Text(StringLegend.custom.value)
+                .font(.system(size: 21, weight: .medium))
+
+            Spacer()
+
+            VStack(spacing: 20) {
+                // todo
+            }
+
+            Spacer()
+
+            StyledButton(title: "Done") {
+                modalRoute = nil
+            }
         }
-        .border(Color.red)
-        .padding(.horizontal, 20)
+        .padding(20)
     }
 }
 
 // MARK: Reuseable views
 
 fileprivate extension ContentView {
-    func stepperView(with amount: Int) -> some View {
-        let buttonGradient = LinearGradient(
-            colors: [.tipiePurple, .tipieDisplayBlue],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-
-        return HStack(spacing: .zero) {
+    var stepperView: some View {
+        HStack(spacing: .zero) {
             // decrement view
             Button {
-                guard numberofSplit > 1 else { return }
-                numberofSplit -= 1
+                guard viewModel.numberOfSplit > 1 else { return }
+                HapticFeedbackService.vibrate(.selection)
+                viewModel.numberOfSplit -= 1
             } label: {
                 Text(StringLegend.minus.value)
                     .font(.system(size: 22)).bold()
+                    .fontDesign(.rounded)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(buttonGradient)
-                    .opacity(numberofSplit <= 1 ? 0.5 : 1)
-                    .disabled(numberofSplit <= 1)
+                    .background(LinearGradient.buttonGradient)
+                    .opacity(viewModel.numberOfSplit <= 1 ? 0.5 : 1)
+                    .disabled(viewModel.numberOfSplit <= 1)
+                    .animation(.easeOut(duration: 0.3), value: viewModel.numberOfSplit <= 1)
             }
 
             // center view label
-            Text("\(numberofSplit)")
+            Text("\(viewModel.numberOfSplit)")
                 .font(.system(size: 22)).bold()
                 .foregroundStyle(.black)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             // increment view
             Button {
-                numberofSplit += 1
+                viewModel.numberOfSplit += 1
+                HapticFeedbackService.vibrate(.selection)
             } label: {
                 Text(StringLegend.plus.value)
                     .font(.system(size: 22)).bold()
+                    .fontDesign(.rounded)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(buttonGradient)
+                    .background(LinearGradient.buttonGradient)
             }
         }
         .buttonStyle(.plain)
@@ -290,15 +302,40 @@ fileprivate extension ContentView {
 
 fileprivate extension ContentView {
     var splitContentView: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 24) {
             Text(StringLegend.splitBill.value)
-                .font(.system(size: 22)).bold()
+                .font(.system(size: 21, weight: .medium))
+
             Spacer()
-            stepperView(with: numberofSplit)
+
+            VStack(spacing: 20) {
+                stepperView
+
+                Divider()
+
+                VStack(spacing: 10) {
+                    Text(viewModel.numberOfSplit > 1 ? "Each Person Pays" : "You Pay")
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.secondary)
+
+                    Text(viewModel.perPersonDisplay)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .contentTransition(.numericText())
+                        .animation(.snappy, value: viewModel.numberOfSplit)
+                }
+            }
+
             Spacer()
+
+            StyledButton(title: "Done") {
+                modalRoute = nil
+            }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 20)
+        .padding(20)
     }
 }
 
