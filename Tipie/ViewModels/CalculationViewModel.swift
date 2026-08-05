@@ -49,6 +49,11 @@ final class CalculationViewModel {
     var tipDisplay: String { format(tipValue) }
     var totalDisplay: String { format(totalValue) }
 
+    /// The active tip percentage formatted for display (in string format), e.g. "15%".
+    var tipPercentageDisplay: String {
+        "\(Int(tipPercentage.rounded()))%"
+    }
+
     /// The total bill split evenly across `numberOfSplit` people, formatted as
     /// currency. The divisor is floored at 1 to avoid dividing by zero.
     var perPersonDisplay: String {

@@ -157,7 +157,7 @@ fileprivate extension ContentView {
         VStack(spacing: 15) {
             VStack(spacing: .zero) {
                 DisplayView(type: .due, separatorVisible: true, value: viewModel.dueDisplay)
-                DisplayView(type: .tip, separatorVisible: true, value: viewModel.tipDisplay)
+                DisplayView(type: .tip, separatorVisible: true, percentile: viewModel.activeTipElement.isCustom ? viewModel.tipPercentageDisplay : nil, value: viewModel.tipDisplay)
                 DisplayView(type: .total, separatorVisible: false, value: viewModel.totalDisplay)
             }
             .frame(maxWidth: .infinity, alignment: .top)
