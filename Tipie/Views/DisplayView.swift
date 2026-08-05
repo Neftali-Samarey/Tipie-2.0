@@ -42,6 +42,7 @@ fileprivate extension DisplayView {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.white.opacity(0.2))
                 )
+                .accessibilityHidden(true)
 
                 HStack(spacing: 15) {
                     Text(type.title)
@@ -84,6 +85,7 @@ fileprivate extension DisplayView {
             .font(.system(.title2, design: .rounded))
             .padding(.horizontal, 20)
             .padding(.vertical, 15)
+            .accessibilityElement(children: .combine)
             
             if separatorVisible {
                 Divider()

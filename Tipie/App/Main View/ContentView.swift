@@ -53,6 +53,7 @@ struct ContentView: View {
     
     @State private var viewModel = CalculationViewModel()
     @State private var modalRoute: ModalRoute?
+    @State private var showingSettings = false
     
     var body: some View {
         NavigationStack {
@@ -94,7 +95,7 @@ struct ContentView: View {
                     HStack(spacing: Constants.iconSpacing) {
                         Button {
                             HapticFeedbackService.vibrate(.selection)
-                            // TODO: trigger info view
+                            showingSettings = true
                         } label: {
                             Image(systemName: Icons.info.value)
                                 .foregroundStyle(.white)
@@ -117,6 +118,7 @@ struct ContentView: View {
                                         .foregroundStyle(.white)
                                 }
                             }
+                            .accessibilityLabel("Split Bill")
                             
                             // trash
                             Button {
@@ -126,12 +128,16 @@ struct ContentView: View {
                                 Image(systemName: Icons.trash.value)
                                     .foregroundStyle(.white)
                             }
+                            .accessibilityLabel("Clear all entries")
                         }
                         .disabled(viewModel.dueValue < 0.01)
                         .opacity(viewModel.dueValue < 0.01 ? 0.5 : 1)
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
             }
             .sheet(item: $modalRoute) { route in
                 Group {
