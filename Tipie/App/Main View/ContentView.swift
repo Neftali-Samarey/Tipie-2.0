@@ -191,7 +191,7 @@ fileprivate extension ContentView {
             }
 
             tipPreset("Custom", isSelected: viewModel.activeTipElement.isCustom) {
-                viewModel.activeTipElement = .custom(amount: 0)
+                viewModel.selectCustomTip()
                 modalRoute = .custom
             }
         }
@@ -251,7 +251,7 @@ fileprivate extension ContentView {
                         return 0
                     },
                     set: { newValue in
-                        viewModel.activeTipElement = .custom(amount: newValue * 100)
+                        viewModel.activeTipElement = .custom(amount: (newValue * 100).rounded())
                     }
                 )
 
@@ -262,7 +262,7 @@ fileprivate extension ContentView {
                     .contentTransition(.numericText())
                     .animation(.snappy, value: tipFraction.wrappedValue)
 
-                Slider(value: tipFraction, in: 0...0.5)
+                Slider(value: tipFraction, in: 0...0.5, step: 0.01)
                     .tint(.tipiePurple)
                     .sensoryFeedback(
                         .selection,

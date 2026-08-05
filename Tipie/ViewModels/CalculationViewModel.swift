@@ -16,7 +16,18 @@ final class CalculationViewModel {
     var amount: String = ""
 
     /// Currently selected tip preset. Updating this keeps `tipPercentage` in sync.
-    var activeTipElement: ActiveTipElement = .fifteen
+    /// Selecting a custom amount also records it so it can be restored later.
+    var activeTipElement: ActiveTipElement = .fifteen {
+        didSet {
+            if case .custom(let amount) = activeTipElement {
+                lastCustomTipPercentage = amount
+            }
+        }
+    }
+
+    /// The most recent custom tip percentage the user entered. Re-selecting the
+    /// custom preset restores this value instead of resetting to zero.
+    private(set) var lastCustomTipPercentage: Double = 0
 
     /// Number of people the bill is split across. Never drops below 1.
     var numberOfSplit: Int = 1
@@ -69,6 +80,11 @@ final class CalculationViewModel {
         }
     }
 
+    /// Selects the custom tip preset, restoring the last entered custom value.
+    func selectCustomTip() {
+        activeTipElement = .custom(amount: lastCustomTipPercentage)
+    }
+
     // MARK: Input handling
 
     func handleKeyboard(_ action: KeyboardView.Action) {
@@ -104,6 +120,7 @@ final class CalculationViewModel {
     func reset() {
         amount = ""
         activeTipElement = .fifteen
+        lastCustomTipPercentage = 0
         numberOfSplit = 1
     }
 }
