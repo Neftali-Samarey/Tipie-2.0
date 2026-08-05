@@ -54,6 +54,8 @@ fileprivate extension DisplayView {
                     .monospacedDigit()
                     .bold()
                     .foregroundStyle(Color.white)
+                    .contentTransition(.numericText())
+                    .animation(.snappy, value: value)
             }
             .font(.system(.title2, design: .rounded))
             .padding(.horizontal, 20)

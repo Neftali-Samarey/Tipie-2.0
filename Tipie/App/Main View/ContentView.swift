@@ -105,26 +105,30 @@ struct ContentView: View {
 
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: Constants.iconSpacing) {
-                        // split
-                        Button {
-                            HapticFeedbackService.vibrate(.selection)
-                            modalRoute = .split
-                        } label: {
-                            if let splitIcon = UIImage(named: Icons.split.value) {
-                                Image(uiImage: splitIcon)
-                                    .renderingMode(.template)
+                        Group {
+                            // split
+                            Button {
+                                HapticFeedbackService.vibrate(.selection)
+                                modalRoute = .split
+                            } label: {
+                                if let splitIcon = UIImage(named: Icons.split.value) {
+                                    Image(uiImage: splitIcon)
+                                        .renderingMode(.template)
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            
+                            // trash
+                            Button {
+                                HapticFeedbackService.vibrate(.selection)
+                                viewModel.reset()
+                            } label: {
+                                Image(systemName: Icons.trash.value)
                                     .foregroundStyle(.white)
                             }
                         }
-                        
-                        // trash
-                        Button {
-                            HapticFeedbackService.vibrate(.selection)
-                            viewModel.reset()
-                        } label: {
-                            Image(systemName: Icons.trash.value)
-                                .foregroundStyle(.white)
-                        }
+                        .disabled(viewModel.dueValue < 0.01)
+                        .opacity(viewModel.dueValue < 0.01 ? 0.5 : 1)
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)
@@ -187,7 +191,7 @@ fileprivate extension ContentView {
             }
 
             tipPreset("Custom", isSelected: viewModel.activeTipElement.isCustom) {
-                viewModel.activeTipElement = .custom(amount: 50.0)
+                viewModel.activeTipElement = .custom(amount: 0)
                 modalRoute = .custom
             }
         }
@@ -239,7 +243,31 @@ fileprivate extension ContentView {
             Spacer()
 
             VStack(spacing: 20) {
-                // todo
+                let tipFraction = Binding<Double>(
+                    get: {
+                        if case .custom(let amount) = viewModel.activeTipElement {
+                            return amount / 100
+                        }
+                        return 0
+                    },
+                    set: { newValue in
+                        viewModel.activeTipElement = .custom(amount: newValue * 100)
+                    }
+                )
+
+                Text("\(Int((tipFraction.wrappedValue * 100).rounded()))%")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
+                    .contentTransition(.numericText())
+                    .animation(.snappy, value: tipFraction.wrappedValue)
+
+                Slider(value: tipFraction, in: 0...0.5)
+                    .tint(.tipiePurple)
+                    .sensoryFeedback(
+                        .selection,
+                        trigger: Int((tipFraction.wrappedValue * 100).rounded())
+                    )
             }
 
             Spacer()
