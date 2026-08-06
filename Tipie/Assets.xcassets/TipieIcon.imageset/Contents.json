@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "tipie-app-icon.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
