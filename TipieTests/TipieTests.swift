@@ -357,4 +357,16 @@ struct TipieTests {
         viewModel.selectCustomTip()
         #expect(viewModel.activeTipElement == .custom(amount: 0))
     }
+
+    // MARK: - ActiveTipElement allCases
+
+    @Test("allCases includes the three presets plus a custom placeholder")
+    func activeTipElementAllCases() {
+        let cases = ActiveTipElement.allCases
+        #expect(cases.count == 4)
+        #expect(cases.contains(.fifteen))
+        #expect(cases.contains(.eighteen))
+        #expect(cases.contains(.twenty))
+        #expect(cases.contains(where: \.isCustom))
+    }
 }

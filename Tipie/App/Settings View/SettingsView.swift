@@ -42,6 +42,27 @@ struct SettingsView: View {
                     .fontWeight(.semibold)
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 1) {
+                    Image("westie_logo")
+                        .resizable()
+                        .renderingMode(.template)
+                        .scaledToFit()
+                        .frame(width: 55, height: 55)
+                        .foregroundStyle(Color.white.opacity(0.92))
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 8)
+                        .accessibilityHidden(true)
+                    
+                    HStack(spacing: 1) {
+                        Text("Scottie")
+                            .font(.system(size: 14, weight: .bold, design: .default))
+
+                        Text("Interactive")
+                            .font(.system(size: 14, weight: .regular, design: .default))
+                    }
+                }
+            }
         }
     }
 }
